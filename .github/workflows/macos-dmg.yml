@@ -63,11 +63,11 @@ jobs:
           echo "Runner architecture: ${actual_arch}"
           test "${actual_arch}" = "${{ matrix.expected_arch }}"
 
-      - name: Build DMG
+      - name: Build app bundle
         shell: bash
         run: |
           set -euo pipefail
-          bash mac/package-dmg.sh "mac/dist/Dokke-macOS-${{ matrix.artifact_suffix }}.dmg"
+          bash mac/install.sh --build-only
 
       - name: Verify bundled native architectures
         shell: bash
@@ -89,6 +89,12 @@ jobs:
 
           grep -qw "${expected}" <<<"${app_archs}"
           grep -qw "${expected}" <<<"${node_archs}"
+
+      - name: Package DMG
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash mac/package-dmg.sh "mac/dist/Dokke-macOS-${{ matrix.artifact_suffix }}.dmg"
 
       - name: Create checksum
         shell: bash

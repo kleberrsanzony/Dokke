@@ -32,11 +32,11 @@ jobs:
       matrix:
         include:
           - display_name: Intel
-            runner: macos-15-intel
+            runner: macos-26-intel
             expected_arch: x86_64
             artifact_suffix: intel-x86_64
           - display_name: Apple Silicon
-            runner: macos-15
+            runner: macos-26
             expected_arch: arm64
             artifact_suffix: apple-silicon-arm64
 
@@ -55,13 +55,16 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm ci
 
-      - name: Verify runner architecture
+      - name: Verify runner and SDK
         shell: bash
         run: |
           set -euo pipefail
           actual_arch="$(uname -m)"
           echo "Runner architecture: ${actual_arch}"
           test "${actual_arch}" = "${{ matrix.expected_arch }}"
+          xcodebuild -version
+          swift --version
+          xcrun --sdk macosx --show-sdk-version
 
       - name: Build app bundle
         shell: bash
